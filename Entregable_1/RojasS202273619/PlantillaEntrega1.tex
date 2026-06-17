@@ -1,0 +1,268 @@
+\documentclass[letter, 10pt]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[dvips]{graphicx}
+\usepackage{url}
+\usepackage[top=3cm,bottom=3cm,left=3.5cm,right=3.5cm,footskip=1.5cm,headheight=1.5cm,headsep=.5cm,textheight=3cm]{geometry}
+
+\begin{document}
+\title{Inteligencia Artificial \\ \begin{Large}Estado del Arte: Problema ARSP (Aircraft Runway Scheduling Problem)\end{Large}}
+\author{Sergio Rojas Gutierrez}
+\date{\today}
+\maketitle
+
+%--------------------No borrar esta secci\'on--------------------------------%
+\section*{Evaluaci\'on}
+
+\begin{tabular}{ll}
+Resumen (5\%): & \underline{\hspace{2cm}} \\
+Introducci\'on (5\%):  & \underline{\hspace{2cm}} \\
+Definici\'on del Problema (10\%):  & \underline{\hspace{2cm}} \\
+Estado del Arte (40\%):  & \underline{\hspace{2cm}} \\
+Modelo Matem\'atico (20\%): &  \underline{\hspace{2cm}}\\
+Conclusiones (15\%): &  \underline{\hspace{2cm}}\\
+Bibliograf\'ia (5\%): & \underline{\hspace{2cm}}\\
+ &  \\
+\textbf{Nota Final (100\%)}:   & \underline{\hspace{2cm}}
+\end{tabular}
+%---------------------------------------------------------------------------%
+\vspace{2cm}
+
+
+\begin{abstract}
+El presente informe analiza el Problema de Programaci\'on de Pistas de Aterrizaje (ARSP), con enfoque en el Problema de Aterrizaje de Aeronaves (ALP). Esta investigaci\'on aborda el desaf\'io log\'istico de optimizar el flujo de tr\'afico en las inmediaciones de los aeropuertos, clasific\'andolo como un problema de optimizaci\'on (\textbf{NP-Hard}). Se presenta una revisi\'on del Estado del Arte, desde la formalizaci\'on de Beasley hasta las tendencias contempor\'aneas en metaheur\'isticas h\'ibridas, IA y DL. Se detalla los componentes cr\'iticos del ALP, tales como las ventanas de tiempo operativas y las restricciones asim\'etricas de seguridad por estela de turbulencia. Finalmente, se revisan modelos matem\'aticos de Programaci\'on Entera Mixta y algoritmos disruptivos de flujo de costo m\'inimo, con el fin de proponer estrategias que equilibren la eficiencia operativa con la reducci\'on del consumo de combustible.
+\end{abstract}
+\newpage
+
+\section{Introducci\'on}
+
+El transporte a\'ereo global no ha hecho m\'as que aumentar su demanda en los \'ultimos a\~nos, esto ha transformado la gesti\'on del tr\'afico en las inmediaciones de los aeropuertos en uno de los desaf\'ios log\'isticos m\'as cruciales de la actualidad.
+
+Tradicionalmente, la secuenciaci\'on de aeronaves en la zona de maniobras terminales (TMA - Terminal Maneuvering Area) ha sido manejada por la experiencia humana de los controladores en turno, junto con algunas reglas operativas simplificadas, como el criterio m\'as b\'asico de todos, \textit{First Come, First Served} (FCFS). Sin embargo, en condiciones de alta densidad de tr\'afico, como periodos vacacionales o festivos, estos m\'etodos resultan ineficientes, derivando en retrasos significativos, lo que a su vez implica un exceso en el consumo de combustible y un aumento innecesario en la huella de carbono del sector asociado \cite{messaoud2020}.
+
+El \textbf{Problema de Aterrizaje de Aeronaves} (ALP, por sus siglas en ingl\'es) surge como una respuesta a la necesidad de optimizar el uso de la infraestructura, en espec\'ifico las pistas de aterrizaje, debido a las limitaciones f\'isicas y los elevados costos de capital asociados a la expansi\'on de la infraestructura (por ejemplo, construir una nueva pista en el aeropuerto de Dublin cuesta alrededor de 320 millones de euros)\cite{caswell2016}, ya que son el mayor cuello de botella del sistema. El ALP consiste en determinar el orden y el tiempo preciso de aterrizaje para un conjunto dado de aeronaves, asegurando que cada una opere dentro de una ventana de tiempo predefinida y respetando restricciones de seguridad \cite{beasley2000}
+
+Un factor determinante en la complejidad que tiene este problema es la naturaleza asim\'etrica de las restricciones de separaci\'on, esto implica que el tiempo de seguridad requerido entre una aeronave $i$ y una aeronave $j$ no es necesariamente igual al requerido en la secuencia inversa; este depende de la interacci\'on f\'isica entre las \textbf{clases de aeronaves} involucradas. La generaci\'on de una estela de turbulencia (\textit{wake turbulence}) por parte de aviones de gran tama\~no obliga a mantener distancias mayores para las aeronaves m\'as ligeras para garantizar la seguridad e integridad del vuelo, lo que convierte la b\'usqueda de una secuencia \'optima en un reto combinatorio de gran escala \cite{beasley2000}
+
+Desde una perspectiva computacional, el ALP se clasifica como un problema de optimizaci\'on \textbf{NP-Hard}. Esto quiere decir que el n\'umero de soluciones posibles sufre de la explosi\'on combinatorial, o sea que crece de manera exponencial con el n\'umero de aeronaves, esto provoca que los m\'etodos de resoluci\'on exacta, o completa, colapsen ante instancias de gran tama\~no o requerimiento de reprogramaci\'on en tiempo real (re-planificaci\'on din\'amica (\textit{rescheduling}) en entornos de tiempo real). Si bien la literatura cl\'asica ha explorado la programaci\'on din\'amila y lineal, en busca de \'optimos te\'oricos, la industria moderna se ha volcado por desarrollar \textbf{algoritmos de b\'usqueda y metaheur\'isticas} que sean capaces de entregar soluciones de alta calidad en una cantidad de tiempo \'infima, fracciones de segundo idealmente.
+
+\section{Definici\'on del Problema}
+
+El \textbf{Problema de Aterrizaje de Aeronaves} (ALP) se define como la tarea de programar el uso de la(s) pista(s) de aterrizaje en un aeropuerto para un conjunto de aviones que se aproximan a la zona de control.
+
+Fundamentalmente, el problema busca decidir una secuencia de aterrizaje y asignar tiempos espec\'ificos para cada operaci\'on, esto con el objetivo de garantizar la seguridad de las aeronaves mientras se optimiza la eficiencia del flujo a\'ereo\cite{beasley2000}, lo que a su vez disminuye los gastos para el aeropuerto, el consumo de combustible y la huella de carbono asociada a mantener las aeronaves en el cielo.
+
+\newpage
+
+\subsection{Componentes del problema}
+En l\'ineas generales, el problema se estructura bajo los siguientes componentes operativos:
+\begin{itemize}
+    \item Objetivo: La meta \'ultima es minimizar el costo total por desviaci\'on respecto a los horarios ideales de llegada. Esto busca reducir tanto el aterrizaje prematuro (\textit{earliness}), que puede generar congesti\'on en las plataformas de desembarque, como el aterrizaje tard\'io (\textit{tardiness}), que genera retrasos en cadena, molestia en la clientela y costos operativos adicionales. \cite{beasley2000}
+    \item Variables de Decisi\'on: El elemento esencial a determinar es el momento preciso de aterrizaje para cada avi\'on. A pesar de que la secuencia de aterrizaje (el orden de estos mismos) es un resultado de estos tiempos, la decisi\'on algor\'itmica implica encontrar un momento preciso dentro de un margen permitido para cada aeronave.
+    \item Restricciones: Todo lo que se ha mencionado est\'a sujeto a dos tipos de limitaciones cr\'iticas.
+    \begin{itemize}
+        \item Ventanas de Tiempo: Estas ventanas definen un rango entre el momento m\'as temprano posible (dependiendo de la velocidad m\'axima del avi\'on) y el m\'as tard\'io posible (dependiendo del consumo de combustible) en el que se puede realizar el aterrizaje.
+        \item Separaciones de Seguridad: Estas separaciones exigen un intervalo de tiempo m\'inimo entre aterrizajes consecutivos, estos intervalos dependen del tiempo necesario para que se disipe la estela de turbulencia generada por el aterrizaje m\'as reciente. Estos tiempo variar\'an seg\'un la categor\'ia de peso de cada aeronave involucrada.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Problemas Relacionados y Variantes}
+El ALP no es un problema aislado, este forma parte de una familia de problemas de optimizaci\'on relacionados a la gesti\'on del tr\'afico a\'ereo (ATM - \textit{Air Traffic Management}). La estructura del mismo es an\'aloga al problema de secuenciamiento en una sola m\'aquina (\textit{Single Machine Scheduling}) con fechas de disponibilidad y penalizaciones por incumplimiento\cite{beasley2000}
+. Asimismo, presenta una relaci\'on directa con el \textbf{Problema del Viajero Asim\'etrico (ATSP)}, donde los aviones representan los nodos, mientras que los tiempos de separaci\'on act\'uan como los costos de transici\'on dependientes del orden. \cite{prakash2018}
+
+
+El problema cuenta con variantes que aumentan la complejidad, estas variantes nacen seg\'un necesidades del aeropuerto estudiado:
+\begin{itemize}
+    \item \textbf{ALP Est\'atico vs. Din\'amico:} Mientras que la variante est\'atica considera un conjunto de aviones fijos conocidos de antemano\cite{beasley2000}, la variante din\'amica gestiona la aparici\'on continua de nuevos aviones en tiempo real, esto requiere algoritmo de re-planificaci\'on constante o reactivos \cite{ikli2021}
+    \item \textbf{Pista \'Unica vs. M\'ultiples Pistas:} El problema puede escalar a la gesti\'on simult\'anea de varias pistas, lo que a\~nade la variable de asignar cada avi\'on a una pista espec\'ifica para balancear la carga de trabajo\cite{beasley2000}.
+    \item \textbf{Modo Mixto:} Algunas variantes consideran pistas que operan tanto para despegues como para aterrizajes de forma intercalada, lo que introduce restricciones adicionales de seguridad, esto por la ocupaci\'on de pista, o pistas, para diferentes tipos de maniobras\cite{bennell2011}.
+\end{itemize}
+
+\newpage
+
+\section{Estado del Arte}
+El estudio del ALP ha evolucionado a pasos agigantados durante el \'ultimo medio siglo. Durante el transcurso de esta secci\'on se presenta una revisi\'on exhaustiva de la literatura, seccionada para responder a las interrogantes esenciales sobre la historia inicial y contempor\'anea de este desaf\'io log\'istico.
+
+\subsection{Origen y Formalizaci\'on del Problema}
+El inter\'es por la optimizaci\'on del flujo a\'ereo terminal tiene sus primeras ra\'ices documentadas en la d\'ecada de 1950. Se considera que el trabajo m\'as temprano en este \'ambito fue realizado por Blumstein (1959) \cite{blumstein1959}, quien describi\'o las primeras metodolog\'ias para la secuenciaci\'on y programaci\'on de aeronaves. 
+
+Posteriormente, el salto hacia el modelamiento t\'ecnico moderno se consolid\'o con el trabajo pionero de Dear (1976) \cite{dear1976} en el MIT. En su tesis, Dear demostr\'o que la disciplina \textit{First-Come, First-Served} (FCFS) era ineficiente e introdujo el concepto de \textbf{\textit{Constrained Position Shifting} (CPS)} para garantizar equidad operativa. Sin embargo, Dear advirti\'o que optimizar secuencias en tiempo real era computacionalmente inviable para la tecnolog\'ia de su \'epoca.
+
+Durante la d\'ecada de 1970, cercano al final de la misma, se estableci\'o la categoria de problema \textbf{NP}, con el documento m\'as conocido de Garey et. al \cite{garey1979}. Esta estandarizaci\'on fue un hito cr\'itico.
+
+Finalmente, la estandarizaci\'on del ALP est\'atico moderno lleg\'o con Beasley et al. (2000) \cite{beasley2000}, quienes establecieron la formulaci\'on de programaci\'on entera mixta (MIP) y la librer\'ia de instancias de prueba (\textit{OR-Library}) que sigue siendo el est\'andar global de evaluaci\'on.
+
+
+\subsection{M\'etodos Completos (Exactos)}
+En los inicios de la investigaci\'on el foco estuvo en los m\'etodos completos, en busca de los \'optimos te\'oricos globales.
+
+Las t\'ecnicas predominantes fueron la \textbf{Programaci\'on Din\'amica (DP)} y los m\'etodos de ramificaci\'on y acotamiento (\textit{Branch and Bound}) basados en modelos MIP \cite{beasley2000}
+
+Para abordar la asimetr\'ia de las clases de aeronaves, investigadores como Prakash et al. (2018) \cite{prakash2018} introdujeron algoritmos de divisi\'on de datos (\textit{data-splitting}), relacionando el ALP con el Problema del Viajero Asim\'etrico con Ventanas de Tiempo (ATSP-TW). No obstante, la literatura llega a una conclusi\'on clara: los m\'etodos completos colapsan ante la explosi\'on combinatoria. \textit{Solvers} comerciales como CPLEX son incapaces de resolver instancias de m\'as de 50 aviones en tiempos operativos viables.
+
+\subsection{Heur\'isticas y M\'etodos Populares}
+Dada la naturaleza prohibitiva de los m\'etodos exactos para la operaci\'on en tiempo real, la literatura se ha centrado en el desarrollo de enfoques aproximados. 
+
+La estrategia m\'as popular y exitosa consiste en descomponer el ALP en una cadena de sub-problemas m\'as sencillos, separando la decisi\'on del \textbf{orden de la secuencia} de la \textbf{asignaci\'on de los tiempos} de aterrizaje\cite{ikli2021}.
+
+Hist\'oricamente, una vez determinado un orden tentativo de aviones, el m\'etodo predominante para calcular los tiempos de aterrizaje consist\'ia en resolver un sub-modelo de \textbf{Programaci\'on Lineal (LP)}. 
+
+Aunque este enfoque garantiza la asignaci\'on \'optima de tiempos para esa secuencia espec\'ifica, requiere llamar a un \textit{solver} (como CPLEX o Gurobi) miles de veces durante la ejecuci\'on de una metaheur\'istica, lo que ralentiza dr\'asticamente el proceso. 
+
+Alternativamente, se han utilizado algoritmos con complejidad cuadr\'atica $\mathcal{O}(n^2)$ que, si bien son m\'as ligeros que un modelo LP completo, siguen presentando limitaciones de escalabilidad cuando el n\'umero de aeronaves ($n$) crece significativamente.
+
+Como respuesta a este cuello de botella computacional, Cao y Xu (2024)\cite{cao2024} introdujeron un algoritmo disruptivo que redefine la asignaci\'on de tiempos. 
+
+Su enfoque consiste en transformar el problema de tiempos en una red de \textbf{flujo de costo m\'inimo} (\textit{min-cost flow}). El aporte fundamental de este m\'etodo es su eficiencia temporal: logra resolver la asignaci\'on \'optima en un tiempo casi lineal $\mathcal{O}(n \log n)$. 
+
+Esta mejora permite que los algoritmos de b\'usqueda contempor\'aneos eval\'uen una cantidad de secuencias candidatas mucho mayor en el mismo intervalo de tiempo. En consecuencia, la combinaci\'on de una heur\'istica de b\'usqueda de secuencia (como una b\'usqueda local o algoritmos gen\'eticos) con el m\'etodo de flujo de Cao y Xu se ha consolidado como la tendencia actual para alcanzar soluciones de alta calidad en entornos operativos donde cada milisegundo es cr\'itico.
+
+\subsection{Representaciones y Tipos de Movimientos}
+
+Cuando empezamos a usar heur\'isticas computacionales y m\'etodos incompletos necesitamos una \textbf{representaci\'on} que est\'e a la altura para asegurar la eficacia.
+La estructura de datos m\'as exitosa y estandarizada es el \textit{arreglo de permutaci\'on} (un vector donde cada \'indice representa el orden de llegada de un avi\'on espec\'ifico).
+
+Para navegar y explorar el espacio de b\'usqueda desde una soluci\'on inicial, los algoritmos aplican diversos 
+\textbf{tipos de movimientos} (\textit{move types}). 
+Los que han demostrado mayor efectividad para el ALP incluyen:
+\begin{itemize}
+    \item \textbf{Intercambio (\textit{Swap}):} Intercambiar la posici\'on de dos aeronaves en la secuencia.
+    \item \textbf{Inserci\'on (\textit{Shift}):} Tomar una aeronave y desplazarla a una nueva posici\'on, desplazando al resto de la cadena.
+    \item \textbf{Inversi\'on (\textit{2-opt}):} Invertir el orden de una subsecuencia completa de aterrizajes.
+\end{itemize}
+
+\subsection{Los Mejores Algoritmos}
+Con el avance del tiempo, la tecnolog\'ia y el conocimiento, las heur\'isticas simples dieron pie a las \textbf{Metaheur\'isticas}. Si vamos por la categor\'ia de la inteligencia bio-inspirada, el Algoritmo de Colonia de Hormigas (ACO) acoplado con modelado de v\'ortice demostr\'o superar a los \textit{solvers} matem\'aticos tradicionales \cite{xu2017}
+
+Sin embargo, los mejores algoritmos creados hasta la fecha, y los que ostentan los r\'ecords mundiales en las instancias de Beasley, son los \textbf{algoritmos h\'ibridos}. Hammouri et al. (2020) \cite{hammouri2020} desarrollaron el algoritmo ISA (\textit{Iterated Simulated Annealing}), el cual mezcla la B\'usqueda Local Iterada (ILS) para diversificar la b\'usqueda usando los movimientos antes mencionados, con el Enfriamiento Simulado (SA) para escapar de \'optimos locales, logrando resultados sin precedentes.
+
+\subsection{Tendencias Actuales}
+La investigaci\'on contempor\'anea del ALP se dirige hacia dos grandes fronteras:
+\begin{enumerate}
+    \item \textbf{Optimizaci\'on Multi-objetivo:} Se ha pasado de solo minimizar retrasos a modelos que incluyen la reducci\'on de costos de combustible, el balance de las pistas y la equidad entre aerol\'ineas, requiriendo algoritmos que generen frentes de Pareto \cite{zhang2020}
+    \item \textbf{Inteligencia Artificial y Aprendizaje Profundo:} La tendencia m\'as disruptiva es el uso de Redes Neuronales de Grafos (GNN) y Aprendizaje por Refuerzo Profundo (DRL). Maru (2025)\cite{maru2025} introdujo una nueva \textit{representaci\'on basada en grafos} donde los aviones son nodos y las separaciones son aristas temporales. Este algoritmo es capaz de reducir el tiempo de c\'omputo en un 99.95\% comparado con MIP, generando soluciones en menos de 1 segundo para entornos reactivos.
+\end{enumerate}
+
+Como conclusi\'on del an\'alisis a la literatura que rodea este problema, para un entorno est\'atico y resoluci\'on pr\'actica, el dise\~no de 
+algoritmos de b\'usqueda heur\'istica implementados en lenguajes de alto rendimiento (como C o C++) se mantiene 
+como el enfoque metodol\'ogico m\'as equilibrado entre factibilidad de desarrollo y excelencia en 
+tiempos operacionales.
+
+\section{Modelo Matem\'atico}
+
+En esta secci\'on se presentan las dos formulaciones fundamentales que sustentan este estudio. Primero, el modelo cl\'asico unificado de Beasley, que abarca la asignaci\'on de pistas y secuencias. Segundo, el avance de 2024 de Cao y Xu, que optimiza exclusivamente la asignaci\'on de tiempos para una secuencia dada mediante redes de flujo.
+
+\subsection{Modelo de Programaci\'on Entera Mixta (Beasley et al., 2000)\cite{beasley2000}}
+
+La formulaci\'on de Beasley et al. \cite{beasley2000} es el est\'andar para el ALP est\'atico en entornos de m\'ultiples pistas. El modelo integra decisiones l\'ogicas (asignaci\'on y orden) con variables continuas (tiempo).
+
+\begin{table}[htbp]
+\centering
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{|l|p{11.5cm}|}
+\hline
+\textbf{Notaci\'on} & \textbf{Par\'ametro} \\
+\hline
+$A$ & Conjunto de aeronaves. \\
+$K$ & Conjunto de pistas. \\
+$T_i$ & Tiempo de aterrizaje objetivo o preferido para la aeronave $i$. \\
+$[E_i, L_i]$ & Ventana de tiempo permitida para el aterrizaje ($L_i > E_i$). \\
+$c_i^-$ & Costo de penalizaci\'on ($\geq 0$) por unidad de tiempo por aterrizar antes de $T_i$. \\
+$c_i^+$ & Costo de penalizaci\'on ($\geq 0$) por unidad de tiempo por aterrizar despu\'es de $T_i$. \\
+$S_{ij}$ & Separaci\'on por turbulencia de estela entre $i$ y $j$, si aterrizan en la \textbf{misma pista} ($i$ antes que $j$). \\
+$s_{ij}$ & Separaci\'on requerida entre $i$ y $j$, si aterrizan en \textbf{pistas distintas} ($i$ antes que $j$). \\
+\hline
+\end{tabular}
+\caption{Par\'ametros de entrada del modelo de Beasley \cite{beasley2000}.}
+\end{table}
+
+\noindent \textbf{Variables de Decisi\'on}\\
+El modelo utiliza variables binarias para la asignaci\'on y secuencia, y variables continuas para los tiempos:
+
+\begin{itemize}
+    \item $a_{ik} = 1$ si la aeronave $i$ es asignada a la pista $k$; $0$ en caso contrario.
+    \item $z_{ij} = 1$ si las aeronaves $i$ y $j$ se asignan a la \textbf{misma pista}; $0$ en caso contrario.
+    \item $\delta_{ij} = 1$ si la aeronave $i$ aterriza antes que la $j$; $0$ en caso contrario.
+    \item $x_i$: Tiempo real de aterrizaje asignado a la aeronave $i$.
+    \item $x_i^-, x_i^+$: Variables de desviaci\'on para linealizar la funci\'on objetivo, donde $x_i^- = \max(0, T_i - x_i)$ y $x_i^+ = \max(0, x_i - T_i)$.
+\end{itemize}
+
+\noindent \textbf{Formulaci\'on Matem\'atica (MIP)}
+\begin{alignat}{2}
+& \underset{a,z,\delta,x,x_i^-,x_i^+}{\textbf{Minimizar}} \qquad & \sum_{i \in \mathcal{A}} (c_i^- x_i^- + c_i^+ x_i^+) & \label{eq:beasley_obj} \\
+& \textbf{Sujeto a:} & \nonumber \\
+& & E_i \leq x_i \leq L_i & \qquad \forall i \in \mathcal{A} \\
+& & 0 \leq x_i^- \leq T_i - E_i & \qquad \forall i \in \mathcal{A} \\
+& & 0 \leq x_i^+ \leq L_i - T_i & \qquad \forall i \in \mathcal{A} \\
+& & x_i = T_i - x_i^- + x_i^+ & \qquad \forall i \in \mathcal{A} \\
+& & \delta_{ij} + \delta_{ji} = 1 & \qquad \forall i, j \in \mathcal{A} : i \neq j \\
+& & \sum_{k \in \mathcal{K}} a_{ik} = 1 & \qquad \forall i \in \mathcal{A} \\
+& & z_{ij} = z_{ji} & \qquad \forall i, j \in \mathcal{A} : i < j \\
+& & z_{ij} \geq a_{ik} + a_{jk} - 1 & \qquad \forall i, j \in \mathcal{A} : i < j, k \in \mathcal{K} \\
+& & x_j \geq x_i + S_{ij}z_{ij} + s_{ij}(1 - z_{ij}) - M\delta_{ji} & \qquad \forall i, j \in \mathcal{A} : i \neq j \label{eq:beasley_sep} \\
+& & a_{ik}, z_{ij}, \delta_{ij} \in \{0, 1\} & \qquad \forall i, j, k
+\end{alignat}
+
+\noindent \textit{Nota sobre el caso de Pista \'Unica:} Para los prop\'ositos de este proyecto, donde se considera una sola pista ($\mathcal{K} = \{1\}$), el modelo se simplifica dr\'asticamente. Las variables $a_{i1}$ y $z_{ij}$ siempre toman el valor de $1$, lo que elimina la necesidad de las restricciones de asignaci\'on y reduce la restricci\'on de separaci\'on \cite{beasley2000} a la forma cl\'asica de pista \'unica: $x_j \geq x_i + S_{ij} - M\delta_{ji}$.
+
+\newpage
+
+\section{Conclusiones}
+
+El exhaustivo an\'alisis de la literatura en torno al Problema de Aterrizaje de Aeronaves (ALP) permite extraer conclusiones reveladoras sobre la evoluci\'on y el estado actual de la optimizaci\'on en la gesti\'on del tr\'afico a\'ereo.
+
+\subsection{Diversidad del Problema y Enfoques de Resoluci\'on}
+Respecto a la naturaleza del problema, se concluye que no todas las t\'ecnicas resuelven exactamente el mismo escenario. Aunque el n\'ucleo fundamental siempre es minimizar la penalizaci\'on por desviaciones temporales bajo restricciones de separaci\'on asim\'etrica, la literatura se ramifica. Mientras que modelos cl\'asicos abordan instancias est\'aticas de pista \'unica (asumiendo conocimiento total previo), los enfoques contempor\'aneos se enfrentan a variantes mucho m\'as complejas: escenarios din\'amicos con aparici\'on de aviones en tiempo real, gesti\'on de m\'ultiples pistas, y optimizaci\'on multi-objetivo que incluye el consumo de combustible y la equidad entre aerol\'ineas.
+
+En el contexto algor\'itmico, las t\'ecnicas difieren radicalmente en su arquitectura, pero comparten un objetivo com\'un: lidiar con la explosi\'on combinatoria dictada por la condici\'on NP-Hard del problema. Los m\'etodos exactos (como la Programaci\'on Entera Mixta y la Programaci\'on Din\'amica) intentan resolver la secuencia y los tiempos de manera unificada, buscando el \'optimo matem\'atico global. Por el contrario, los m\'etodos heur\'isticos y metaheur\'isticos optan por una estrategia de descomposici\'on: separan el problema abordando primero la permutaci\'on (el orden de los aviones) y luego delegando la asignaci\'on exacta de los tiempos a un sub-algoritmo especializado.
+
+\subsection{Limitaciones de las T\'ecnicas Actuales}
+A pesar de los avances tecnol\'ogicos de la \'ultima epoca, todas las familias de m\'etodos presentan limitaciones inherentes:
+\begin{itemize}
+    \item \textbf{M\'etodos Exactos:} Su principal limitaci\'on es la escalabilidad. Ante escenarios de alta densidad (m\'as de 50 aeronaves), los \textit{solvers} comerciales colapsan computacionalmente, volvi\'endose in\'utiles para la toma de decisiones en vivo.
+    \item \textbf{Metaheur\'isticas:} Aunque son r\'apidas, carecen de garant\'ias te\'oricas de optimalidad global. Dependen fuertemente de la calibraci\'on emp\'irica de par\'ametros (\textit{tuning}) y corren el riesgo de estancarse en \'optimos locales si sus operadores de movimiento (por ejemplo, \textit{swaps} o \textit{shifts}) no est\'an bien dise\~nados.
+    \item \textbf{Aprendizaje Profundo (DRL/GNN):} Aunque ofrecen tiempos de reacci\'on sub-segundo, act\'uan como "cajas negras", lo que dificulta la trazabilidad de las decisiones (un factor cr\'itico en la seguridad aeron\'autica) y requieren un poder computacional masivo en su fase de entrenamiento previo.
+\end{itemize}
+
+\subsection{Estrategias Prometedoras y Trabajo Futuro}
+Tras la revisi\'on, se determina que existen dos estrategias consolidadas como las m\'as prometedoras en la actualidad. Para escenarios \textit{offline} y est\'aticos, la hibridaci\'on de metaheur\'isticas (combinando diversificaci\'on e intensificaci\'on) acopladas con algoritmos de asignaci\'on de tiempos basados en redes de flujo de costo m\'inimo $\mathcal{O}(n \log n)$ representa la c\'uspide del rendimiento actual. Para entornos \textit{online} reactivos, el uso de Redes Neuronales de Grafos (GNN) emerge como la frontera tecnol\'ogica indiscutible.
+
+\textbf{Lineamientos y Propuestas de Investigaci\'on Futura:}\\
+Queda un vasto trabajo futuro por realizar, especialmente en la transici\'on de modelos deterministas a modelos estoc\'asticos que capturen la realidad atmosf\'erica. Como propuesta directriz para investigaciones venideras, se plantean los siguientes lineamientos:
+\begin{enumerate}
+    \item \textbf{Incorporaci\'on de Incertidumbre Meteorol\'ogica:} Desarrollar algoritmos de b\'usqueda robusta que no asuman velocidades de aproximaci\'on fijas, sino que calculen secuencias capaces de absorber perturbaciones estoc\'asticas (como r\'afagas de viento cruzado o tormentas locales) sin requerir una re-planificaci\'on total de la pista.
+    \item \textbf{Hiperheur\'isticas Adaptativas:} En lugar de dise\~nar un algoritmo h\'ibrido est\'atico, investigar arquitecturas de \textit{hiperheur\'isticas} regidas por Aprendizaje por Refuerzo, donde el sistema aprenda a elegir de forma aut\'onoma qu\'e operador de movimiento (\textit{swap, shift, 2-opt}) aplicar en tiempo real seg\'un la topolog\'ia del espacio de b\'usqueda en ese instante espec\'ifico.
+    \item \textbf{Computaci\'on Cu\'antica Aplicada:} Como visi\'on a largo plazo, se propone explorar la formulaci\'on del ALP como un modelo QUBO (\textit{Quadratic Unconstrained Binary Optimization}) para ser procesado mediante \textit{Quantum Annealing}. Esto podr\'ia, te\'oricamente, resolver la restricci\'on NP-Hard mitigando las penalizaciones de tiempo en escalas actualmente inalcanzables.
+\end{enumerate}
+
+En definitiva, la resoluci\'on algor\'itmica del ALP ha dejado de ser un mero ejercicio de optimizaci\'on matem\'atica para convertirse en una disciplina cr\'itica que fusiona la investigaci\'on de operaciones, el dise\~no de redes eficientes y la inteligencia artificial, pilares indispensables para garantizar la sostenibilidad y seguridad de la aviaci\'on civil moderna.
+
+\section{Uso de LLMs e Inteligencia Artificial}
+A continuaci\'on, se detallan las herramientas de Inteligencia Artificial y Modelos de Lenguaje Grande (LLMs) utilizadas como apoyo en el desarrollo y redacci\'on del presente informe, en cumplimiento con las normativas de probidad acad\'emica de la asignatura.
+
+\vspace{0.3cm}
+\noindent \textbf{Herramienta 1: Asistencia en Redacci\'on y Formato}
+\begin{enumerate}
+    \item \textbf{Herramienta utilizada:} Gemini (Google) - Versi\'on Advanced (Modelo 3.1 Pro).
+    \item \textbf{Prop\'osito de uso:} Estructuraci\'on general del informe, asistencia en la traducci\'on de conceptos t\'ecnicos, depuraci\'on del formato y c\'odigo de ecuaciones en \LaTeX{}, y s\'intesis narrativa de la revisi\'on bibliogr\'afica.
+    \item \textbf{Prompts relevantes:} Debido a la metodolog\'ia de conversaci\'on continua y guiada, se omite la transcripci\'on de \textit{prompts} individuales. En su lugar, el registro \'integro de las interacciones, directrices y la evoluci\'on del documento puede ser auditado directamente en el siguiente enlace al historial del chat: \textbf{[https://gemini.google.com/share/7b36e05a7efb]}.
+    \item \textbf{Nivel de edici\'on:} Altamente iterativo. La herramienta se utiliz\'o para generar primeros borradores (\textit{drafts}) que luego fueron analizados, parafraseados y reescritos manualmente para asegurar el hilo conductor y el tono acad\'emico adecuado. Ninguna secci\'on fue copiada y pegada ciegamente; el c\'odigo \LaTeX{} devuelto fue depurado manualmente.
+    \item \textbf{Validaci\'on:} Toda afirmaci\'on matem\'atica o te\'orica generada fue contrastada mediante la lectura cruzada con los documentos en PDF originales (ej. Beasley 2000, Cao \& Xu 2024), adem\'as de verificar el estricto cumplimiento con la r\'ubrica de evaluaci\'on.
+\end{enumerate}
+
+\vspace{0.3cm}
+\noindent \textbf{Herramienta 2: Mapeo y Descubrimiento de Literatura}
+\begin{enumerate}
+    \item \textbf{Herramienta utilizada:} Connected Papers (Herramienta visual impulsada por IA para an\'alisis de grafos de citaciones).
+    \item \textbf{Prop\'osito de uso:} Descubrimiento de literatura, rastreo de trabajos derivados (\textit{derivative works}) y expansi\'on de la base bibliogr\'afica para construir un Estado del Arte actualizado hasta el a\~no 2025.
+    \item \textbf{Prompts relevantes/B\'usqueda:} Se utilizaron nodos semilla (\textit{seed papers}) estrat\'egicos. Espec\'ificamente: \textit{``Scheduling aircraft landings-the static case''} (Beasley, 2000) y \textit{``The aircraft runway scheduling problem: A survey''} (Ikli et al., 2021)\cite{ikli2021}.
+    \item \textbf{Nivel de edici\'on:} La herramienta entreg\'o grafos de citaciones masivos. Se realiz\'o un trabajo manual de filtrado, leyendo los t\'itulos y \textit{abstracts} de m\'as de 30 art\'iculos, clasific\'andolos y seleccion\'andolos manualmente por relevancia para el contexto espec\'ifico de pista \'unica.
+    \item \textbf{Validaci\'on:} El uso de la herramienta se valid\'o verificando la procedencia de los art\'iculos sugeridos, asegurando que provinieran de revistas indexadas de alto impacto (como \textit{Transportation Science} o \textit{Annals of Operations Research}) y no de repositorios sin revisi\'on por pares.
+\end{enumerate}
+
+\bibliographystyle{plain}
+\bibliography{Referencias}
+
+\end{document} 

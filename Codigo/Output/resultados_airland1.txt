@@ -1,0 +1,95 @@
+Cantidad de Aviones: 10
+Cantidad de Pistas: 10
+Avión ID: 0, 
+	Tiempo Llegada: 54, 
+	Tiempo Mínimo: 129, 
+	Tiempo Objetivo: 155, 
+	Tiempo Máximo: 559, 
+	Costo Segundo Temprano: 10, 
+	Costo Segundo Tarde: 10
+Avión ID: 1, 
+	Tiempo Llegada: 120, 
+	Tiempo Mínimo: 195, 
+	Tiempo Objetivo: 258, 
+	Tiempo Máximo: 744, 
+	Costo Segundo Temprano: 10, 
+	Costo Segundo Tarde: 10
+Avión ID: 2, 
+	Tiempo Llegada: 14, 
+	Tiempo Mínimo: 89, 
+	Tiempo Objetivo: 98, 
+	Tiempo Máximo: 510, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 3, 
+	Tiempo Llegada: 21, 
+	Tiempo Mínimo: 96, 
+	Tiempo Objetivo: 106, 
+	Tiempo Máximo: 521, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 4, 
+	Tiempo Llegada: 35, 
+	Tiempo Mínimo: 110, 
+	Tiempo Objetivo: 123, 
+	Tiempo Máximo: 555, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 5, 
+	Tiempo Llegada: 45, 
+	Tiempo Mínimo: 120, 
+	Tiempo Objetivo: 135, 
+	Tiempo Máximo: 576, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 6, 
+	Tiempo Llegada: 49, 
+	Tiempo Mínimo: 124, 
+	Tiempo Objetivo: 138, 
+	Tiempo Máximo: 577, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 7, 
+	Tiempo Llegada: 51, 
+	Tiempo Mínimo: 126, 
+	Tiempo Objetivo: 140, 
+	Tiempo Máximo: 573, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 8, 
+	Tiempo Llegada: 60, 
+	Tiempo Mínimo: 135, 
+	Tiempo Objetivo: 150, 
+	Tiempo Máximo: 591, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Avión ID: 9, 
+	Tiempo Llegada: 85, 
+	Tiempo Mínimo: 160, 
+	Tiempo Objetivo: 180, 
+	Tiempo Máximo: 657, 
+	Costo Segundo Temprano: 30, 
+	Costo Segundo Tarde: 30
+Matriz de Costos S:
+	99999 	3 	15 	15 	15 	15 	15 	15 	15 	15 
+	3 	99999 	15 	15 	15 	15 	15 	15 	15 	15 
+	15 	15 	99999 	8 	8 	8 	8 	8 	8 	8 
+	15 	15 	8 	99999 	8 	8 	8 	8 	8 	8 
+	15 	15 	8 	8 	99999 	8 	8 	8 	8 	8 
+	15 	15 	8 	8 	8 	99999 	8 	8 	8 	8 
+	15 	15 	8 	8 	8 	8 	99999 	8 	8 	8 
+	15 	15 	8 	8 	8 	8 	8 	99999 	8 	8 
+	15 	15 	8 	8 	8 	8 	8 	8 	99999 	8 
+	15 	15 	8 	8 	8 	8 	8 	8 	8 	99999 
+----------------------------------------
+Solución Inicial (Asignación de Aviones a Pistas):
+Avión 0 asignado a Pista 2
+Avión 1 asignado a Pista 1
+Avión 2 asignado a Pista 5
+Avión 3 asignado a Pista 8
+Avión 4 asignado a Pista 3
+Avión 5 asignado a Pista 6
+Avión 6 asignado a Pista 4
+Avión 7 asignado a Pista 7
+Avión 8 asignado a Pista 0
+Avión 9 asignado a Pista 9
