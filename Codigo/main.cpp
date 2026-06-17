@@ -7,7 +7,7 @@ using namespace std;
 int main(){
     cout << fixed << setprecision(2); 
     
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
         NUM_RESTARTS = 0; 
         MEJOR_COSTO = 100000000;
         MEJOR_SOLUCION.clear();

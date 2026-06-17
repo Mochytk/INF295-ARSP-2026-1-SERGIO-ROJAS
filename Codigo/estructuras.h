@@ -19,7 +19,7 @@ struct Avion {
 
 // Declaración de Variables globales (extern)
 extern int NUM_AVIONES; 
-extern int NUM_PISTAS; 
+extern int HOLGURA; 
 extern vector<Avion> AVIONES; 
 extern vector<vector<double>> COSTOS_S; 
 extern int NUM_PRUEBA;

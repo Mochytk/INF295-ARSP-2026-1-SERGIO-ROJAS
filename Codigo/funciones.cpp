@@ -8,7 +8,7 @@ using namespace std;
 
 // Instanciación de variables globales
 int NUM_AVIONES; 
-int NUM_PISTAS; 
+int HOLGURA; 
 vector<Avion> AVIONES; 
 vector<vector<double>> COSTOS_S; 
 int NUM_PRUEBA;
@@ -23,7 +23,7 @@ void leerArchivo(const string& filename){
     if (!archivo.is_open()) {
         cerr << "Error al abrir el archivo: " << filename << endl;
     }
-    archivo >> NUM_AVIONES >> NUM_PISTAS;
+    archivo >> NUM_AVIONES >> HOLGURA;
     AVIONES.resize(NUM_AVIONES);
     COSTOS_S.assign(NUM_AVIONES, vector<double>(NUM_AVIONES, 0.0));
     for (int i = 0; i < NUM_AVIONES; i++) {
@@ -37,11 +37,6 @@ void leerArchivo(const string& filename){
         for (int j = 0; j < NUM_AVIONES; j++) {
             archivo >> COSTOS_S[i][j];
         }
-        // Saltar matriz s_ij
-        for (int j = 0; j < NUM_AVIONES; j++) {
-            double ignorar;
-            archivo >> ignorar; 
-        }
     }
 }
 
@@ -50,7 +45,8 @@ vector<int> generarSolucionInicial() {
     for (int i = 0; i < NUM_AVIONES; i++) {
         solucion[i] = i; 
     }
-    mt19937 g(SEED); 
+    random_device rd;
+    mt19937 g(rd()); 
     shuffle(solucion.begin(), solucion.end(), g);
     return solucion;
 }
