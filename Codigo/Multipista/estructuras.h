@@ -6,21 +6,21 @@
 
 using namespace std;
 
-// Struct para los datos de cada avión
-struct Avion {
-    int id;
-    double tiempo_llegada;
-    double tiempo_minimo;
-    double tiempo_objetivo;
-    double tiempo_maximo;
-    double costo_segundo_temprano;
-    double costo_segundo_tarde;
+// Struct para los datos reales del aeropuerto
+struct AvionReal {
+    int id;          
+    string codigo_vuelo;     
+    string modelo;           
+    char categoria_estela;   // Ej: 'M', 'H'
+    char operacion;          // Ej: 'A', 'D'
+    double tiempo_objetivo;  
+    double penalidad;        
 };
 
 // Declaración de Variables globales (extern)
 extern int NUM_AVIONES; 
-extern int HOLGURA; 
-extern vector<Avion> AVIONES; 
+extern int NUM_PISTAS; 
+extern vector<AvionReal> AVIONES; 
 extern vector<vector<double>> COSTOS_S; 
 extern int NUM_PRUEBA;
 extern int SEED; 
@@ -29,8 +29,8 @@ extern double TIEMPO_TOTAL;
 extern vector<int> MEJOR_SOLUCION;
 extern double MEJOR_COSTO;
 
-// Declaración de las funciones para que el main las conozca
-void leerArchivo(const string& filename);
+void leerArchivo(const string& filename_vuelos);
+
 vector<int> generarSolucionInicial();
 double funcionEvaluacion(const vector<int>& solucion);
 void swap(vector<int>& solucion, int i, int j);
