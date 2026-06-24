@@ -45,9 +45,13 @@ vector<int> generarSolucionInicial() {
     for (int i = 0; i < NUM_AVIONES; i++) {
         solucion[i] = i; 
     }
-    random_device rd;
-    mt19937 g(rd()); 
+    mt19937 g(SEED); 
     shuffle(solucion.begin(), solucion.end(), g);
+    while (funcionEvaluacion(solucion) == -1) {
+        SEED += 100;
+        mt19937 g(SEED); 
+        shuffle(solucion.begin(), solucion.end(), g);
+    }
     return solucion;
 }
 
