@@ -233,7 +233,7 @@ namespace Multi {
                     if (costo_actual < MEJOR_COSTO) {
                         MEJOR_COSTO = costo_actual;
                         MEJOR_SOLUCION = solucion_actual;
-                        cout << ">>> " << "[Restart " << NUM_RESTARTS<<"] NUEVO MEJOR COSTO GLOBAL: " << MEJOR_COSTO << " <<<" << endl;
+                        cout << ">>> " << "[Restart " << NUM_RESTARTS<<"] NUEVO MEJOR COSTO: " << MEJOR_COSTO << " <<<" << endl;
                     }
                 }
             }
