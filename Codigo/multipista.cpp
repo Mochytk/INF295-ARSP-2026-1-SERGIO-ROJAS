@@ -1,3 +1,12 @@
+/**
+ * @file multipista.cpp
+ * @brief Motor algorítmico para la resolución del Problema de Aterrizaje de Aeronaves (ALP) en Múltiples Pistas.
+ * * Este archivo implementa una metaheurística Hill Climbing con Best Improvement (HC-BI).
+ * Utiliza instancias basadas en tráfico real (FPT) y emplea una estrategia Greedy dentro de 
+ * la función de evaluación para asignar cada aeronave de la secuencia a la pista que 
+ * minimice su costo de penalización.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <random>
@@ -10,25 +19,33 @@
 using namespace std;
 
 namespace Multi {
-    // Instanciación de variables globales
-    int NUM_AVIONES; 
-    int NUM_PISTAS; 
-    vector<AvionReal> AVIONES; 
-    vector<vector<double>> COSTOS_S; 
+    // --- Variables Globales del Espacio de Nombres ---
+    int NUM_AVIONES;                    // Cantidad total de aeronaves en la instancia actual
+    int NUM_PISTAS;                     // Número de pistas operativas para la simulación (K)
+    vector<AvionReal> AVIONES;          // Lista con los datos de cada aeronave
+    vector<vector<double>> COSTOS_S;    // Matriz asimétrica de tiempos de separación por turbulencia (S_ij)
     int NUM_PRUEBA;
-    int SEED = 256; 
-    int NUM_RESTARTS = 0; 
-    int RESTARTS_MAXIMOS;
-    double TIEMPO_TOTAL = 0; 
-    vector<int> MEJOR_SOLUCION;
-    double MEJOR_COSTO = 100000000.0;
+    int SEED = 256;                     // Semilla base para el generador de números aleatorios
+    int NUM_RESTARTS = 0;               // Contador actual de reinicios en el Hill Climbing
+    int RESTARTS_MAXIMOS;               // Límite paramétrico de reinicios (ej. 10 o 20)
+    double TIEMPO_TOTAL = 0;            // (No utilizada directamente, el tiempo se mide con chrono localmente)
+    vector<int> MEJOR_SOLUCION;         // Arreglo de permutación que representa la mejor secuencia histórica
+    double MEJOR_COSTO = 100000000.0;   // Valor de costo asociado a la mejor solución global encontrada
 
+    /**
+     * @brief Operador de movimiento elemental. Intercambia dos posiciones en una secuencia.
+     */
     void swap(vector<int>& solucion, int i, int j) {
         int temp = solucion[i];
         solucion[i] = solucion[j];
         solucion[j] = temp;
     }
 
+    /**
+     * @brief Genera el vecindario completo a partir de una solución base utilizando el operador Swap.
+     * @param solucion Secuencia de aterrizaje actual.
+     * @return vector<vector<int>> Matriz con todas las combinaciones posibles de vecindarios.
+     */
     vector<vector<int>> generarVecindario(const vector<int>& solucion){
         vector<vector<int>> vecindario;
         for (int i = 0; i < NUM_AVIONES - 1; i++) {
@@ -41,10 +58,17 @@ namespace Multi {
         return vecindario;
     }
 
+    /**
+     * @brief Función central de evaluación. Calcula el costo total de penalización de una secuencia dada.
+     * Implementa una lógica Greedy: Para cada avión en la secuencia, revisa todas las pistas y lo 
+     * asigna a aquella que le genere el menor costo o, en caso de empate, el aterrizaje más temprano.
+     * @param solucion Permutación que representa el orden de llegada.
+     * @return double Costo total de penalización de toda la secuencia.
+     */
     double funcionEvaluacion(const vector<int>& solucion) {
         double costo_total = 0.0;
         
-        // Historiales independientes para cada pista
+        // Historiales independientes para monitorear el estado y la estela de cada pista
         vector<vector<int>> historial_pistas(NUM_PISTAS);
         vector<vector<double>> tiempos_pistas(NUM_PISTAS);
 
@@ -55,23 +79,24 @@ namespace Multi {
             double mejor_tiempo_real = 9999999.0;
             double mejor_costo_avion = 9999999.0;
             
-            // El algoritmo evalúa todas las pistas para tomar la decisión más barata
+            // Evalúa el costo de insertar el avión actual en cada pista disponible
             for (int k = 0; k < NUM_PISTAS; k++) {
-                double tiempo_liberacion = 0; // Al no tener E_i, asumimos que puede aterrizar desde t=0
+                double tiempo_liberacion = 0; // Se asume E_i = 0 (aterrizaje posible desde t=0)
                 
-                // Revisar la estela SOLO contra los aviones asignados a ESTA pista (k)
+                // Calcular el tiempo seguro basado en la estela de los aviones previamente asignados a esta pista (k)
                 for (size_t p = 0; p < historial_pistas[k].size(); p++) {
                     int avion_previo = historial_pistas[k][p];
                     double tiempo_previo = tiempos_pistas[k][p];
                     tiempo_liberacion = max(tiempo_liberacion, tiempo_previo + COSTOS_S[avion_previo][avion_actual]);
                 }
                 
+                // El tiempo real es el máximo entre el tiempo seguro de pista y el tiempo en que el avión desea aterrizar (T_i)
                 double tiempo_real = max(tiempo_liberacion, AVIONES[avion_actual].tiempo_objetivo);
                 
-                // Al no tener L_i, la permutación siempre es factible. Calculamos penalidad simétrica.
+                // Cálculo de la penalidad absoluta y simétrica
                 double costo_temp = abs(tiempo_real - AVIONES[avion_actual].tiempo_objetivo) * AVIONES[avion_actual].penalidad;
                 
-                // Nos quedamos con la pista que nos genere el menor costo (o si empatan costo, la que nos deje aterrizar antes)
+                // Política Greedy: Guardar la pista que resulte en menor costo o menor tiempo ante empates
                 if (costo_temp < mejor_costo_avion || (costo_temp == mejor_costo_avion && tiempo_real < mejor_tiempo_real)) { 
                     mejor_tiempo_real = tiempo_real;
                     mejor_pista = k;
@@ -79,6 +104,7 @@ namespace Multi {
                 }
             }
             
+            // Consolidar la asignación en la mejor pista encontrada
             historial_pistas[mejor_pista].push_back(avion_actual);
             tiempos_pistas[mejor_pista].push_back(mejor_tiempo_real);
             costo_total += mejor_costo_avion;
@@ -87,6 +113,12 @@ namespace Multi {
         return costo_total;
     }
 
+    /**
+     * @brief Devuelve la separación mínima de seguridad en base a las categorías de turbulencia de estela.
+     * @param prev Avión que aterrizó antes en la misma pista.
+     * @param act Avión que intenta aterrizar.
+     * @return double Tiempo de separación en segundos.
+     */
     double obtenerSeparacionFija(const AvionReal& prev, const AvionReal& act) {
         if (prev.categoria_estela == 'H' && act.categoria_estela == 'H') return 90.0;
         if (prev.categoria_estela == 'H' && act.categoria_estela == 'M') return 120.0;
@@ -97,9 +129,13 @@ namespace Multi {
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'H') return 60.0;
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'M') return 60.0;
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'L') return 60.0;
-        return 60.0;
+        return 60.0; // Fallback por defecto
     }
 
+    /**
+     * @brief Procesa el archivo de texto de la instancia y carga los datos en estructuras de memoria.
+     * Calcula dinámicamente la matriz de separación estática COSTOS_S.
+     */
     void leerArchivo(const string& filename_vuelos){
         ifstream arch_vuelos(filename_vuelos);
         if (!arch_vuelos.is_open()) {
@@ -121,7 +157,7 @@ namespace Multi {
         }
         arch_vuelos.close();
 
-        // Generamos la matriz internamente usando la regla fija del ayudante
+        // Generación de la matriz de turbulencia
         COSTOS_S.assign(NUM_AVIONES, vector<double>(NUM_AVIONES, 0.0));
         for(int i = 0; i < NUM_AVIONES; i++) {
             for(int j = 0; j < NUM_AVIONES; j++) {
@@ -134,6 +170,10 @@ namespace Multi {
         }
     }
 
+    /**
+     * @brief Crea una permutación inicial factible mezclando de forma aleatoria los IDs de los aviones.
+     * (Al no haber ventanas L_i, cualquier secuencia generada aleatoriamente es factible por defecto).
+     */
     vector<int> generarSolucionInicial() {
         vector<int> solucion(NUM_AVIONES);
         for (int i = 0; i < NUM_AVIONES; i++) {
@@ -144,7 +184,7 @@ namespace Multi {
         
         while (costo_inicial == -1) {
             mt19937 g(SEED); 
-            shuffle(solucion.begin(), solucion.end(), g);
+            shuffle(solucion.begin(), solucion.end(), g); // Diversificación inicial
             
             costo_inicial = funcionEvaluacion(solucion);
             if (costo_inicial == -1) {
@@ -154,6 +194,12 @@ namespace Multi {
         return solucion;
     }
     
+    /**
+     * @brief Motor principal de búsqueda metaheurística: Hill Climbing - Best Improvement.
+     * Explora exhaustivamente todo el vecindario y adopta el vecino que brinde la mayor mejora.
+     * Continúa iterando hasta estancarse en un óptimo local, tras lo cual reinicia el proceso
+     * alterando la semilla para explorar nuevas regiones.
+     */
     void HC(vector<int> solucion_actual) {
         while (NUM_RESTARTS < RESTARTS_MAXIMOS) {
             bool optimo_local = false;
@@ -166,6 +212,7 @@ namespace Multi {
                 double mejor_costo_vecino = costo_actual;
                 bool mejora_encontrada = false;
 
+                // Evaluación exhaustiva de todos los vecinos generados por Swap
                 for (const auto& vecino : vecindario) {
                     double costo_vecino = funcionEvaluacion(vecino);
                     if (costo_vecino < mejor_costo_vecino) {
@@ -176,10 +223,13 @@ namespace Multi {
                 }
 
                 if (mejora_encontrada) {
+                    // Actualización de estado si se detecta una trayectoria descendente (mejora)
                     solucion_actual = mejor_vecino;
                     costo_actual = mejor_costo_vecino;
                 } else {
+                    // Se alcanza el fondo de un valle (óptimo local)
                     optimo_local = true;
+                    // Verificación contra la memoria histórica global
                     if (costo_actual < MEJOR_COSTO) {
                         MEJOR_COSTO = costo_actual;
                         MEJOR_SOLUCION = solucion_actual;
@@ -188,15 +238,20 @@ namespace Multi {
                 }
             }
 
+            // Gestión paramétrica de Reinicios
             NUM_RESTARTS++;
-            if (NUM_RESTARTS < 10) {
-                SEED += 100; 
+            if (NUM_RESTARTS < RESTARTS_MAXIMOS) {
+                SEED += 100; // Alteración del estado del generador para asegurar diversidad
                 solucion_actual = generarSolucionInicial(); 
             }
         } 
         cout << "\nBúsqueda Terminada. Mejor costo global: " << MEJOR_COSTO << endl;
     }
 
+    /**
+     * @brief Formatea e imprime los resultados, incluyendo métricas paramétricas y un desglose 
+     * detallado de las operaciones aeronáuticas asignadas a cada pista.
+     */
     void escribirSalida(const string& filename, const vector<int>& solucion, const double& tiempo_total) {
         ofstream archivo(filename);
         if (!archivo.is_open()) {
@@ -210,6 +265,7 @@ namespace Multi {
         archivo << "Costo Total: " << MEJOR_COSTO << endl;
         archivo << "\n--- ASIGNACIÓN POR PISTAS ---" << endl;
 
+        // Se re-evalúa la solución para extraer la logística de separación final a imprimir
         vector<vector<int>> historial_pistas(NUM_PISTAS);
         vector<vector<double>> tiempos_pistas(NUM_PISTAS);
 
@@ -238,7 +294,7 @@ namespace Multi {
             tiempos_pistas[mejor_pista].push_back(mejor_tiempo_real);
         }
 
-        // Escribimos los resultados estructurados
+        // Escribimos los resultados estructurados segmentados por pista de aterrizaje
         for (int k = 0; k < NUM_PISTAS; k++) {
             archivo << "\n>> PISTA " << k + 1 << " <<" << endl;
             for (size_t p = 0; p < historial_pistas[k].size(); p++) {
@@ -255,17 +311,24 @@ namespace Multi {
         archivo.close();
     }
 
+    /**
+     * @brief Orquestador central de las pruebas. Itera sistemáticamente a través de las 12
+     * instancias FPT aplicando variaciones paramétricas estocásticas e inyectando temporizadores 
+     * de alta resolución.
+     */
     void ejecutarPruebas(int pistas_ingresadas) {
         NUM_PISTAS = pistas_ingresadas; 
         cout << fixed << setprecision(2); 
+        
+        // Petición interactiva de hiperparámetros
         cout << "Ingrese la cantidad de Restarts: ";
         cin >> RESTARTS_MAXIMOS;
         int cant_semillas;
         cout << "Ingrese el número de semillas: ";
         cin >> cant_semillas;
 
+        // Generación del conjunto robusto de semillas basado en potencias de 2
         vector<int> lista_semillas;
-
         for (int i = 8; i < 8+cant_semillas; i++) {
             lista_semillas.push_back(pow(2, i));
         }
@@ -281,6 +344,7 @@ namespace Multi {
             for (size_t s = 0; s < lista_semillas.size(); s++) {
                 int semilla_base = lista_semillas[s];
                 
+                // Reset crítico del estado global por cada ensayo experimental
                 SEED = semilla_base; 
                 NUM_RESTARTS = 0; 
                 MEJOR_COSTO = 100000000.0;
@@ -289,11 +353,15 @@ namespace Multi {
                 cout << "  -> Ejecutando prueba con SEED " << semilla_base << "..." << endl;
                 
                 vector<int> solucion_inicial = generarSolucionInicial();
+                
+                // Encapsulamiento con reloj de alta precisión (ms)
                 auto inicio_tiempo = chrono::high_resolution_clock::now();
                 HC(solucion_inicial);
                 auto fin_tiempo = chrono::high_resolution_clock::now();
+                
                 double tiempo_ejecucion_ms = chrono::duration<double, std::milli>(fin_tiempo - inicio_tiempo).count();
                 
+                // Serialización dinámica de salidas para facilitar el post-procesamiento con scripts
                 string filename = "Output_Multipista/resultados_FPT" + num_str + "_SEED" + to_string(SEED) + "_PISTAS=" + to_string(NUM_PISTAS) + ".txt";
                 escribirSalida(filename, MEJOR_SOLUCION, tiempo_ejecucion_ms);
             }
