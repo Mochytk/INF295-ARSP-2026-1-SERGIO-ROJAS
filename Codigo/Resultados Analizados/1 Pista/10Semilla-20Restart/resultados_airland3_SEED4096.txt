@@ -1,0 +1,28 @@
+Solución Final Output_Unipista/resultados_airland3_SEED4096.txt:
+Seed utilizada: 4996
+Cantidad de Restarts: 20
+Costo Total (Penalidad): 1610.00
+
+--- ORDEN Y TIEMPOS DE ATERRIZAJE (PISTA ÚNICA) ---
+Orden  1 | Avión:  0 | T. Objetivo:   82.00 | T. Real:   82.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden  2 | Avión:  5 | T. Objetivo:  106.00 | T. Real:  106.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden  3 | Avión:  7 | T. Objetivo:  108.00 | T. Real:  114.00 | Desvío:   6.00s | Penalidad: 180.00
+Orden  4 | Avión:  3 | T. Objetivo:  117.00 | T. Real:  122.00 | Desvío:   5.00s | Penalidad: 150.00
+Orden  5 | Avión: 11 | T. Objetivo:  126.00 | T. Real:  130.00 | Desvío:   4.00s | Penalidad: 120.00
+Orden  6 | Avión:  8 | T. Objetivo:  132.00 | T. Real:  138.00 | Desvío:   6.00s | Penalidad: 180.00
+Orden  7 | Avión:  9 | T. Objetivo:  130.00 | T. Real:  146.00 | Desvío:  16.00s | Penalidad: 480.00
+Orden  8 | Avión: 10 | T. Objetivo:  149.00 | T. Real:  154.00 | Desvío:   5.00s | Penalidad: 150.00
+Orden  9 | Avión: 18 | T. Objetivo:  160.00 | T. Real:  162.00 | Desvío:   2.00s | Penalidad: 60.00
+Orden 10 | Avión: 19 | T. Objetivo:  169.00 | T. Real:  170.00 | Desvío:   1.00s | Penalidad: 30.00
+Orden 11 | Avión:  2 | T. Objetivo:  160.00 | T. Real:  185.00 | Desvío:  25.00s | Penalidad: 250.00
+Orden 12 | Avión:  1 | T. Objetivo:  197.00 | T. Real:  197.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 13 | Avión:  6 | T. Objetivo:  229.00 | T. Real:  229.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 14 | Avión: 14 | T. Objetivo:  258.00 | T. Real:  258.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 15 | Avión:  4 | T. Objetivo:  261.00 | T. Real:  261.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 16 | Avión: 17 | T. Objetivo:  287.00 | T. Real:  287.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 17 | Avión: 13 | T. Objetivo:  316.00 | T. Real:  316.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 18 | Avión: 12 | T. Objetivo:  336.00 | T. Real:  336.00 | Desvío:   0.00s | Penalidad: 0.00
+Orden 19 | Avión: 16 | T. Objetivo:  338.00 | T. Real:  339.00 | Desvío:   1.00s | Penalidad: 10.00
+Orden 20 | Avión: 15 | T. Objetivo:  409.00 | T. Real:  409.00 | Desvío:   0.00s | Penalidad: 0.00
+
+Tiempo Total de Ejecución: 6.02 ms

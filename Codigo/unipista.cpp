@@ -3,12 +3,12 @@
 #include <random>
 #include <iomanip>
 #include <algorithm>
+#include <chrono>
 #include "estructuras.h"
 
 using namespace std;
 
 namespace Uni {
-    // 2. Pega aquí todas tus funciones de Unipista (leerArchivo, funcionEvaluacion, HC, etc.)
     // Instanciación de variables globales
     int NUM_AVIONES; 
     int HOLGURA; 
@@ -17,6 +17,7 @@ namespace Uni {
     int NUM_PRUEBA;
     int SEED; 
     int NUM_RESTARTS = 0; 
+    int RESTARTS_MAXIMOS;
     vector<int> MEJOR_SOLUCION;
     double MEJOR_COSTO = 100000000;
 
@@ -146,7 +147,7 @@ namespace Uni {
     }
 
     void HC(vector<int> solucion_actual) {
-        while (NUM_RESTARTS < 10) {
+        while (NUM_RESTARTS < RESTARTS_MAXIMOS) {
             bool optimo_local = false;
             double costo_actual = funcionEvaluacion(solucion_actual);
 
@@ -239,12 +240,14 @@ namespace Uni {
                     << " | Penalidad: " << penalizacion << endl;
         }
 
-        archivo << "\nTiempo Total de Ejecución: " << tiempo_total << " segundos" << endl;
+        archivo << "\nTiempo Total de Ejecución: " << tiempo_total << " ms" << endl;        
         archivo.close();
     }
     
     void ejecutarPruebas() {
         cout << fixed << setprecision(2); 
+        cout << "Ingrese la cantidad de Restarts: ";
+        cin >> RESTARTS_MAXIMOS;
         int cant_semillas;
         cout << "Ingrese el número de semillas: ";
         cin >> cant_semillas;
@@ -254,7 +257,7 @@ namespace Uni {
             lista_semillas.push_back(pow(2, i));
         }
         
-        for (int i = 1; i <= 13; i++) {
+        for (int i = 1; i <= 12; i++) {
         string arch_vuelos = "Una pista/airland" + to_string(i) + ".txt";
         
         cout << "\n=============================================" << endl;
@@ -278,16 +281,16 @@ namespace Uni {
             // 2. Generar solución inicial e iniciar la búsqueda
             vector<int> solucion_inicial = generarSolucionInicial();
             
-            double tiempo_inicial = static_cast<double>(clock()) / CLOCKS_PER_SEC;
+            auto inicio_tiempo = chrono::high_resolution_clock::now();            
             HC(solucion_inicial);
-            double tiempo_final = static_cast<double>(clock()) / CLOCKS_PER_SEC;
-            
+            auto fin_tiempo = chrono::high_resolution_clock::now();
+            double tiempo_ejecucion_ms = chrono::duration<double, std::milli>(fin_tiempo - inicio_tiempo).count();
+
             // 4. Formatear el nombre del archivo y escribir los resultados
             string filename = "Output_Unipista/resultados_airland" + to_string(i) + "_SEED" + to_string(semilla_base) + ".txt";
-            escribirSalida(filename, MEJOR_SOLUCION, tiempo_final - tiempo_inicial);
+            escribirSalida(filename, MEJOR_SOLUCION, tiempo_ejecucion_ms);
         }
     }
-        
         cout << "\n¡Todas las instancias Unipista procesadas!" << endl;
     }
 }

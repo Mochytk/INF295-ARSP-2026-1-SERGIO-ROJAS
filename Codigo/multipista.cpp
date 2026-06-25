@@ -3,6 +3,8 @@
 #include <random>
 #include <iomanip>
 #include <cmath>
+#include <algorithm>
+#include <chrono>
 #include "estructuras.h"
 
 using namespace std;
@@ -16,6 +18,7 @@ namespace Multi {
     int NUM_PRUEBA;
     int SEED = 256; 
     int NUM_RESTARTS = 0; 
+    int RESTARTS_MAXIMOS;
     double TIEMPO_TOTAL = 0; 
     vector<int> MEJOR_SOLUCION;
     double MEJOR_COSTO = 100000000.0;
@@ -94,6 +97,7 @@ namespace Multi {
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'H') return 60.0;
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'M') return 60.0;
         if (prev.categoria_estela == 'L' && act.categoria_estela == 'L') return 60.0;
+        return 60.0;
     }
 
     void leerArchivo(const string& filename_vuelos){
@@ -151,12 +155,9 @@ namespace Multi {
     }
     
     void HC(vector<int> solucion_actual) {
-        while (NUM_RESTARTS < 10) {
+        while (NUM_RESTARTS < RESTARTS_MAXIMOS) {
             bool optimo_local = false;
             double costo_actual = funcionEvaluacion(solucion_actual);
-            
-            cout << "\n--- Iniciando Restart " << NUM_RESTARTS << " ---" << endl;
-            cout << "Costo inicial: " << costo_actual << endl;
 
             while (!optimo_local) {
                 vector<vector<int>> vecindario = generarVecindario(solucion_actual);
@@ -182,7 +183,7 @@ namespace Multi {
                     if (costo_actual < MEJOR_COSTO) {
                         MEJOR_COSTO = costo_actual;
                         MEJOR_SOLUCION = solucion_actual;
-                        cout << ">>> NUEVO MEJOR COSTO GLOBAL: " << MEJOR_COSTO << " <<<" << endl;
+                        cout << ">>> " << "[Restart " << NUM_RESTARTS<<"] NUEVO MEJOR COSTO GLOBAL: " << MEJOR_COSTO << " <<<" << endl;
                     }
                 }
             }
@@ -250,13 +251,15 @@ namespace Multi {
             }
         }
         
-        archivo << "\nTiempo Total de Ejecución: " << tiempo_total << endl;
+        archivo << "\nTiempo Total de Ejecución: " << tiempo_total << " ms" << endl;
         archivo.close();
     }
 
     void ejecutarPruebas(int pistas_ingresadas) {
         NUM_PISTAS = pistas_ingresadas; 
         cout << fixed << setprecision(2); 
+        cout << "Ingrese la cantidad de Restarts: ";
+        cin >> RESTARTS_MAXIMOS;
         int cant_semillas;
         cout << "Ingrese el número de semillas: ";
         cin >> cant_semillas;
@@ -286,14 +289,13 @@ namespace Multi {
                 cout << "  -> Ejecutando prueba con SEED " << semilla_base << "..." << endl;
                 
                 vector<int> solucion_inicial = generarSolucionInicial();
-                double tiempo_inicial = static_cast<double>(clock()) / CLOCKS_PER_SEC;
+                auto inicio_tiempo = chrono::high_resolution_clock::now();
                 HC(solucion_inicial);
-                double tiempo_final = static_cast<double>(clock()) / CLOCKS_PER_SEC;
+                auto fin_tiempo = chrono::high_resolution_clock::now();
+                double tiempo_ejecucion_ms = chrono::duration<double, std::milli>(fin_tiempo - inicio_tiempo).count();
                 
-                SEED = semilla_base; 
-                
-                string filename = "Output_Multipista/resultados_FPT" + num_str + "_SEED" + to_string(semilla_base) + ".txt";
-                escribirSalida(filename, MEJOR_SOLUCION, tiempo_final - tiempo_inicial);
+                string filename = "Output_Multipista/resultados_FPT" + num_str + "_SEED" + to_string(SEED) + "_PISTAS=" + to_string(NUM_PISTAS) + ".txt";
+                escribirSalida(filename, MEJOR_SOLUCION, tiempo_ejecucion_ms);
             }
         }
         cout << "\n¡Todas las instancias Multipista procesadas!" << endl;
