@@ -62,9 +62,6 @@ for root, dirs, files in os.walk(base_dir):
                         m = regex_tiempo.search(line)
                         if m: tiempo = m.group(1)
             
-            # Transformar los puntos por comas (estándar de Excel en español)
-            costo_es = costo.replace('.', ',') if costo else ""
-            tiempo_es = tiempo.replace('.', ',') if tiempo else ""
             
             datos.append({
                 'Tipo': tipo_instancia,
@@ -73,8 +70,8 @@ for root, dirs, files in os.walk(base_dir):
                 'Instancia': instancia,
                 'Semilla': seed,
                 'Restarts_Reales': restarts,
-                'Costo_Total': costo_es,
-                'Tiempo': tiempo_es
+                'Costo_Total': costo,
+                'Tiempo': tiempo
             })
 
 # Función para ordenar lógicamente
