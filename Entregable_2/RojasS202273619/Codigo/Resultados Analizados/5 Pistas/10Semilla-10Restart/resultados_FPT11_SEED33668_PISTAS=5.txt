@@ -1,0 +1,78 @@
+Solución Final Output_Multipista/resultados_FPT11_SEED33668_PISTAS=5.txt:
+Seed utilizada: 33668
+Cantidad de Restarts: 10
+Costo Total: 53728.00
+
+--- ASIGNACIÓN POR PISTAS ---
+
+>> PISTA 1 <<
+Vuelo: ADH6856 	| Mod: A320 	| T.Obj: 1645.00 	| T.Real: 1645.00 	| Desvío: 0.00s
+Vuelo: JET578 	| Mod: A320 	| T.Obj: 1722.00 	| T.Real: 1725.00 	| Desvío: 3.00s
+Vuelo: AZA2109 	| Mod: A320 	| T.Obj: 1700.00 	| T.Real: 1805.00 	| Desvío: 105.00s
+Vuelo: SMX5233 	| Mod: A320 	| T.Obj: 1812.00 	| T.Real: 1885.00 	| Desvío: 73.00s
+Vuelo: AZA2058 	| Mod: A320 	| T.Obj: 1916.00 	| T.Real: 1965.00 	| Desvío: 49.00s
+Vuelo: AZA2056 	| Mod: A320 	| T.Obj: 1745.00 	| T.Real: 2045.00 	| Desvío: 300.00s
+Vuelo: AZA113 	| Mod: A320 	| T.Obj: 1932.00 	| T.Real: 2125.00 	| Desvío: 193.00s
+Vuelo: AMC625 	| Mod: A319 	| T.Obj: 1750.00 	| T.Real: 2205.00 	| Desvío: 455.00s
+Vuelo: DLH5PV 	| Mod: A319 	| T.Obj: 1735.00 	| T.Real: 2285.00 	| Desvío: 550.00s
+Vuelo: NJE023C 	| Mod: H25B 	| T.Obj: 1721.00 	| T.Real: 2365.00 	| Desvío: 644.00s
+Vuelo: N64MP 	| Mod: PA34 	| T.Obj: 1658.00 	| T.Real: 2465.00 	| Desvío: 807.00s
+Vuelo: SIW214 	| Mod: PRM1 	| T.Obj: 1645.00 	| T.Real: 2525.00 	| Desvío: 880.00s
+
+>> PISTA 2 <<
+Vuelo: AZA1727 	| Mod: A320 	| T.Obj: 1635.00 	| T.Real: 1635.00 	| Desvío: 0.00s
+Vuelo: SMX5610 	| Mod: MD82 	| T.Obj: 1715.00 	| T.Real: 1715.00 	| Desvío: 0.00s
+Vuelo: KLM1622 	| Mod: B738 	| T.Obj: 1740.00 	| T.Real: 1795.00 	| Desvío: 55.00s
+Vuelo: ADH5415 	| Mod: A320 	| T.Obj: 1832.00 	| T.Real: 1875.00 	| Desvío: 43.00s
+Vuelo: SMX5248 	| Mod: A320 	| T.Obj: 1740.00 	| T.Real: 1955.00 	| Desvío: 215.00s
+Vuelo: AZA1760 	| Mod: A320 	| T.Obj: 1933.00 	| T.Real: 2035.00 	| Desvío: 102.00s
+Vuelo: AZA1241 	| Mod: A320 	| T.Obj: 1805.00 	| T.Real: 2115.00 	| Desvío: 310.00s
+Vuelo: VLE7049 	| Mod: A320 	| T.Obj: 1813.00 	| T.Real: 2195.00 	| Desvío: 382.00s
+Vuelo: VLE7048 	| Mod: CRJ9 	| T.Obj: 1641.00 	| T.Real: 2275.00 	| Desvío: 634.00s
+Vuelo: AFR2112 	| Mod: A318 	| T.Obj: 1713.00 	| T.Real: 2355.00 	| Desvío: 642.00s
+Vuelo: DEPPG 	| Mod: PA46 	| T.Obj: 1728.00 	| T.Real: 2455.00 	| Desvío: 727.00s
+Vuelo: ITOPS 	| Mod: PC12 	| T.Obj: 1717.00 	| T.Real: 2515.00 	| Desvío: 798.00s
+
+>> PISTA 3 <<
+Vuelo: DLH276 	| Mod: A319 	| T.Obj: 1628.00 	| T.Real: 1628.00 	| Desvío: 0.00s
+Vuelo: VLE7101 	| Mod: A321 	| T.Obj: 1701.00 	| T.Real: 1708.00 	| Desvío: 7.00s
+Vuelo: VLE7105 	| Mod: MD82 	| T.Obj: 1735.00 	| T.Real: 1788.00 	| Desvío: 53.00s
+Vuelo: ISS1207 	| Mod: MD82 	| T.Obj: 1844.00 	| T.Real: 1868.00 	| Desvío: 24.00s
+Vuelo: BAW16GM 	| Mod: A321 	| T.Obj: 1904.00 	| T.Real: 1948.00 	| Desvío: 44.00s
+Vuelo: IBE3626 	| Mod: A320 	| T.Obj: 1900.00 	| T.Real: 2028.00 	| Desvío: 128.00s
+Vuelo: AZA243 	| Mod: A320 	| T.Obj: 1923.00 	| T.Real: 2108.00 	| Desvío: 185.00s
+Vuelo: AZA2075 	| Mod: A320 	| T.Obj: 1800.00 	| T.Real: 2188.00 	| Desvío: 388.00s
+Vuelo: VLE7095 	| Mod: A319 	| T.Obj: 1835.00 	| T.Real: 2268.00 	| Desvío: 433.00s
+Vuelo: BEL10D 	| Mod: RJ85 	| T.Obj: 1650.00 	| T.Real: 2348.00 	| Desvío: 698.00s
+Vuelo: LVN378 	| Mod: C56X 	| T.Obj: 1633.00 	| T.Real: 2428.00 	| Desvío: 795.00s
+Vuelo: NJE384T 	| Mod: F2TH 	| T.Obj: 1640.00 	| T.Real: 2508.00 	| Desvío: 868.00s
+
+>> PISTA 4 <<
+Vuelo: AZA3RY 	| Mod: A320 	| T.Obj: 1640.00 	| T.Real: 1640.00 	| Desvío: 0.00s
+Vuelo: ADH7VG 	| Mod: A320 	| T.Obj: 1708.00 	| T.Real: 1720.00 	| Desvío: 12.00s
+Vuelo: ISS1556 	| Mod: MD82 	| T.Obj: 1750.00 	| T.Real: 1800.00 	| Desvío: 50.00s
+Vuelo: AZA2050 	| Mod: A320 	| T.Obj: 1646.00 	| T.Real: 1880.00 	| Desvío: 234.00s
+Vuelo: ADH2968 	| Mod: A320 	| T.Obj: 1920.00 	| T.Real: 1960.00 	| Desvío: 40.00s
+Vuelo: AZA2114 	| Mod: A320 	| T.Obj: 1846.00 	| T.Real: 2040.00 	| Desvío: 194.00s
+Vuelo: SM5997 	| Mod: A320 	| T.Obj: 1842.00 	| T.Real: 2120.00 	| Desvío: 278.00s
+Vuelo: AZA419 	| Mod: E170 	| T.Obj: 1828.00 	| T.Real: 2200.00 	| Desvío: 372.00s
+Vuelo: AMC624 	| Mod: A319 	| T.Obj: 1650.00 	| T.Real: 2280.00 	| Desvío: 630.00s
+Vuelo: AFR1010 	| Mod: LJ45 	| T.Obj: 1722.00 	| T.Real: 2360.00 	| Desvío: 638.00s
+Vuelo: ITL201 	| Mod: PRM1 	| T.Obj: 1648.00 	| T.Real: 2460.00 	| Desvío: 812.00s
+Vuelo: LVN381 	| Mod: C56X 	| T.Obj: 1810.00 	| T.Real: 2520.00 	| Desvío: 710.00s
+
+>> PISTA 5 <<
+Vuelo: ADH2913 	| Mod: MD82 	| T.Obj: 1629.00 	| T.Real: 1629.00 	| Desvío: 0.00s
+Vuelo: ISS1505 	| Mod: MD82 	| T.Obj: 1649.00 	| T.Real: 1709.00 	| Desvío: 60.00s
+Vuelo: ISS1209 	| Mod: MD82 	| T.Obj: 1739.00 	| T.Real: 1789.00 	| Desvío: 50.00s
+Vuelo: SMX5293 	| Mod: A321 	| T.Obj: 1840.00 	| T.Real: 1869.00 	| Desvío: 29.00s
+Vuelo: AZA081 	| Mod: A320 	| T.Obj: 1908.00 	| T.Real: 1949.00 	| Desvío: 41.00s
+Vuelo: JET575 	| Mod: A320 	| T.Obj: 1835.00 	| T.Real: 2029.00 	| Desvío: 194.00s
+Vuelo: BAW47NL 	| Mod: A320 	| T.Obj: 1710.00 	| T.Real: 2109.00 	| Desvío: 399.00s
+Vuelo: AZA1297 	| Mod: A320 	| T.Obj: 1800.00 	| T.Real: 2189.00 	| Desvío: 389.00s
+Vuelo: SMX5288 	| Mod: A319 	| T.Obj: 1842.00 	| T.Real: 2269.00 	| Desvío: 427.00s
+Vuelo: AFR2113 	| Mod: A318 	| T.Obj: 1835.00 	| T.Real: 2349.00 	| Desvío: 514.00s
+Vuelo: SNM644 	| Mod: F2TH 	| T.Obj: 1630.00 	| T.Real: 2429.00 	| Desvío: 799.00s
+Vuelo: ITOPX 	| Mod: BE40 	| T.Obj: 1624.00 	| T.Real: 2509.00 	| Desvío: 885.00s
+
+Tiempo Total de Ejecución: 1191.35 ms
